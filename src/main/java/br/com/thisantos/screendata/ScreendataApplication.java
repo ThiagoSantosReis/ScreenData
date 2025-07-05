@@ -1,14 +1,19 @@
 package br.com.thisantos.screendata;
 
-import br.com.thisantos.screendata.models.Series;
-import br.com.thisantos.screendata.services.DataConverter;
-import br.com.thisantos.screendata.services.MediaAPI;
+import br.com.thisantos.screendata.principal.Principal;
+import br.com.thisantos.screendata.repository.SeriesRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.Locale;
+
 @SpringBootApplication
 public class ScreendataApplication implements CommandLineRunner {
+
+	@Autowired
+	private SeriesRepository seriesRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ScreendataApplication.class, args);
@@ -16,14 +21,9 @@ public class ScreendataApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		try{
-			var mediaApi = new MediaAPI();
-			var jsonData = mediaApi.getData("https://www.omdbapi.com/?t=the+flash&apikey=19b2c158");
-			DataConverter converter = new DataConverter();
-			Series data = converter.getData(jsonData, Series.class);
-			System.out.println(data);
-		}catch (RuntimeException e){
-			System.out.println(e.getMessage());
-		}
+		Locale.setDefault(Locale.US);
+		Principal principal = new Principal(seriesRepository);
+		principal.showMenu();
+
 	}
 }
